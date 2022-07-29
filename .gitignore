@@ -1,0 +1,8 @@
+run/
+tmp/
+.DS_Store
+.env
+.vscode/
+docs/
+vendor/
+runtime/
