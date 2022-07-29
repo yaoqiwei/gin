@@ -94,7 +94,7 @@ type KafkaConfig struct {
 }
 
 /*Init : 初始化配置*/
-func Init() {
+func init() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("no such .env file, use system env")
