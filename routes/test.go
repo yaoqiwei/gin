@@ -11,5 +11,6 @@ func Test(apiGroup *gin.RouterGroup) {
 	// 用户登入
 	apiUserGroup.POST("/login", controller.TestGet)
 	apiUserGroup.POST("/cron", controller.CornTest)
+	apiUserGroup.POST("/order", controller.OrderNum)
 
 }

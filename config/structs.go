@@ -1,6 +1,6 @@
 package config
 
-const envPerfix string = "DVC_"
+const envPerfix string = "GIN_"
 
 /*LogConfig : 日志配置文件结构*/
 type LogConfig struct {

@@ -15,11 +15,19 @@ var DB *gorm.DB
 // Database ...
 func Init(config config.DatabaseConfig) error {
 	//dsn="root:admin@tcp(127.0.0.1:3306)/go_test?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", config.User, config.Password, config.Host, config.Port, config.Name, config.Charset)
-	fmt.Println(dsn)
-	DB, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local",
+		config.User,
+		config.Password,
+		config.Host,
+		config.Port,
+		config.Name,
+		config.Charset,
+	)
+	var err error
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, // 使用单数表名
+			TablePrefix:   "cmf_",
 		},
 		//禁用默认事务，防止重复提交/回滚
 		SkipDefaultTransaction: true,
@@ -28,6 +36,7 @@ func Init(config config.DatabaseConfig) error {
 		fmt.Println("连接数据库异常,err", err)
 		return err
 	}
+
 	sqlDB, err := DB.DB()
 	if err != nil {
 		return err
@@ -38,9 +47,9 @@ func Init(config config.DatabaseConfig) error {
 	sqlDB.SetMaxOpenConns(config.MaxOpenConns)
 
 	// Auto()
-	DB.AutoMigrate(
-		&Pushrecord{},
-	)
+	// DB.AutoMigrate(
+	// 	&Pushrecord{},
+	// )
 	log.Info("数据库连接成功！")
 	return nil
 }
