@@ -30,7 +30,7 @@ func main() {
 	sumMap := make(map[string]float64, 0)
 	countMap := make(map[string]float64, 0)
 
-	file, _ := os.Open("/Volumes/yqw/xm/gin/ddg_predictions.out")
+	file, _ := os.Open("E:/go-code/gin/ddg_predictions.out")
 
 	defer file.Close()
 	b, _ := ioutil.ReadAll(file)
@@ -42,13 +42,12 @@ func main() {
 			if len(arr) == 0 {
 				continue
 			}
+			lineFloat, _ := strconv.ParseFloat(arr[2], 64)
 			if data, ok := sumMap[arr[1]]; ok {
-				lineFloat, _ := strconv.ParseFloat(arr[2], 64)
 				sumMap[arr[1]] = data + lineFloat
 			} else {
-				sumMap[arr[1]] = data
+				sumMap[arr[1]] = lineFloat
 			}
-
 			if data, ok := countMap[arr[1]]; ok {
 				countMap[arr[1]] = data + float64(1)
 			} else {
@@ -63,7 +62,6 @@ func main() {
 			Aval: fmt.Sprintf("%.3f", i/count),
 		})
 	}
-
 	Export(list)
 	// fmt.Println(list)
 }
@@ -102,7 +100,7 @@ func Export(data []*NameData) {
 			row.AddCell().Value = data[field.Field]
 		}
 	}
-	outFile := "/Volumes/yqw/xm/gin/test.xlsx"
+	outFile := "E:/go-code/gin/test.xlsx"
 	err = file.Save(outFile)
 	if err != nil {
 		fmt.Printf(err.Error())
