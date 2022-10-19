@@ -1,33 +1,20 @@
 package config
 
 import (
-	"log"
 	"os"
 	"strconv"
 
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 /*Init : 初始化配置*/
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("no such .env file, use system env")
+		logrus.Errorf("no such .env file, use system env", err)
 	} else {
-		log.Println("use .env file")
-	}
-}
-
-/*Log : 日志配置内容*/
-func Log() LogConfig {
-	logConsole := Getenv("LOG_CONSOLE")
-	logFilename := Getenv("LOG_FILENAME")
-	if logFilename == "" {
-		logFilename = "run"
-	}
-	return LogConfig{
-		Filename: logFilename,
-		Console:  logConsole == "true",
+		logrus.Info("use .env file")
 	}
 }
 

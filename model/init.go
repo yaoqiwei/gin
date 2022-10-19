@@ -3,8 +3,8 @@ package model
 import (
 	"fmt"
 	"gin/config"
-	"gin/log"
 
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -14,7 +14,6 @@ var DB *gorm.DB
 
 // Database ...
 func Init(config config.DatabaseConfig) error {
-	//dsn="root:admin@tcp(127.0.0.1:3306)/go_test?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local",
 		config.User,
 		config.Password,
@@ -33,7 +32,7 @@ func Init(config config.DatabaseConfig) error {
 		SkipDefaultTransaction: true,
 	})
 	if err != nil {
-		fmt.Println("连接数据库异常,err", err)
+		logrus.Errorf("连接数据库异常", err)
 		return err
 	}
 
@@ -50,6 +49,6 @@ func Init(config config.DatabaseConfig) error {
 	// DB.AutoMigrate(
 	// 	&Pushrecord{},
 	// )
-	log.Info("数据库连接成功！")
+	logrus.Info("数据库连接成功！")
 	return nil
 }
