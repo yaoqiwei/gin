@@ -1,27 +1,29 @@
 package routes
 
 import (
-	"net/http"
-	"time"
+	"gin/middleware"
 
-	"github.com/gin-contrib/pprof"
-
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 // InitRouter ...
-func InitRouter() {
-	r := gin.New()
-	apiGroupV1 := r.Group("/api/v1")
-	Test(apiGroupV1)
+func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 
-	s := &http.Server{
-		Addr:           ":9000",
-		Handler:        r,
-		ReadTimeout:    30 * time.Second,
-		WriteTimeout:   30 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
-	s.ListenAndServe()
-	pprof.Register(r)
+	router := gin.New()
+	router.ForwardedByClientIP = true
+	router.Use(middlewares...)
+
+	// 错误中间件
+	router.Use(middleware.RecoveryMiddleware())
+
+	// 跨域中间件
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"}
+
+	// 公共中间件
+	router.Use(cors.New(config))
+	router.Use(middleware.LogMiddleware())
+
+	return router
 }

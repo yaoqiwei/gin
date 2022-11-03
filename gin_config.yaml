@@ -1,0 +1,20 @@
+ApiConfig:
+  port: 8080
+
+TimeZone:
+  Zone: 'CTS'
+  Time: 28800
+
+DatabaseConfig:
+  Host: 127.0.0.1
+  Port: 3306
+  User: root
+  Password: 123456
+  Name: gin
+  Charset: utf8mb4
+
+RedisConfig:
+  Host: 127.0.0.1,
+  Port: 6379
+  Password: 123
+  Db: 2

@@ -1,7 +1,8 @@
 package response
 
 import (
-	"gin/util"
+	"gin/util/compute"
+	"gin/util/convert"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,10 +43,10 @@ func Success(c *gin.Context, content ...interface{}) {
 
 // SerializeJson 序列化json
 func SerializeJson(c *gin.Context, res *Response, httpCode int) {
-	res.TraceId = util.GetRandomString(6)
+	res.TraceId = compute.GetRandomString(6)
 	if res.Data == nil {
 		res.Data = struct{}{}
 	}
-	c.Set("response", util.ToJson(res))
+	c.Set("response", convert.ToJson(res))
 	c.JSON(httpCode, res)
 }

@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	// logConfig := config.Log()
 	DatabaseConfig := config.Database()
 	RedisConfig := config.Redis()
 
@@ -17,6 +16,6 @@ func main() {
 	model.Init(DatabaseConfig)
 	redis.Init(RedisConfig)
 
-	routes.InitRouter()
+	routes.HttpServerRun()
 
 }
