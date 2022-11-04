@@ -2,7 +2,7 @@ package redis
 
 import (
 	"context"
-	"gin/config"
+	"gin/config/structs"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -13,7 +13,7 @@ var RDB *redis.Client
 var DefaultExpiration = time.Minute * 1440 * 7
 
 /*Init : 初始化REDIS*/
-func Init(config config.RedisConfig) {
+func Init(config structs.RedisConfig) {
 	addr := config.Host + ":" + config.Port
 	RDB = redis.NewClient(&redis.Options{
 		Addr:     addr,

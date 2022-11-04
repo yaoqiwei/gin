@@ -90,6 +90,7 @@ func AesEncryptByte(origData []byte, key string) ([]byte, error) {
 	blockMode.CryptBlocks(cryted, origData)
 	return cryted, nil
 }
+
 func AesEncrypt(plaintext string, key string) (string, error) {
 	encryptByte, err := AesEncryptByte([]byte(plaintext), key)
 	if err != nil {
@@ -97,6 +98,7 @@ func AesEncrypt(plaintext string, key string) (string, error) {
 	}
 	return string(encryptByte), nil
 }
+
 func AesDecryptByte(crytedByte []byte, key string) ([]byte, error) {
 	// 转成字节数组
 	k := []byte(key)
@@ -129,14 +131,14 @@ func AesDecrypt(cryted string, key string) (string, error) {
 	return string(decryptByte), nil
 }
 
-//补码
+// PKCS7Padding 补码
 func PKCS7Padding(ciphertext []byte, blocksize int) []byte {
 	padding := blocksize - len(ciphertext)%blocksize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(ciphertext, padtext...)
 }
 
-//去码
+// PKCS7UnPadding 去码
 func PKCS7UnPadding(origData []byte) []byte {
 	length := len(origData)
 	unpadding := int(origData[length-1])

@@ -1,9 +1,11 @@
 package routes
 
 import (
+	"gin/common/lib"
 	"gin/middleware"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +25,13 @@ func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 
 	// 公共中间件
 	router.Use(cors.New(config))
-	router.Use(middleware.LogMiddleware())
+	router.Use(middleware.LogMiddleware(), middleware.HeaderAuthMiddleware())
+	pprof.Register(router)
+
+	r := lib.RegisterRouterGroup{}
+	r.RouterGroup = router.Group("")
+	r2 := lib.RegisterRouterGroup{}
+	r2.RouterGroup = router.Group("", middleware.JwtAuthMiddleware())
 
 	return router
 }

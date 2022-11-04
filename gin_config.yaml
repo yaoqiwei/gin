@@ -13,6 +13,24 @@ DatabaseConfig:
   Name: gin
   Charset: utf8mb4
 
+MysqlConf:
+  List:
+    'default':
+      DriverName: 'mysql'
+      DataSourceName: 'root:123456@tcp(127.0.0.1:3306)/gin?charset=utf8mb4&parseTime=true&loc=Asia%2FChongqing'
+      MaxOpenConn: 50
+      MaxIdleConn: 20
+      MaxConnLifeTime: 100
+      Prefix: 'cmf_'
+    'read':
+      DriverName: 'mysql'
+      DataSourceName: 'root:123456@tcp(127.0.0.1:3306)/gin?charset=utf8mb4&parseTime=true&loc=Asia%2FChongqing'
+      MaxOpenConn: 50
+      MaxIdleConn: 20
+      MaxConnLifeTime: 100
+      Prefix: 'cmf_'
+  Split: 3
+
 RedisConfig:
   Host: 127.0.0.1,
   Port: 6379
