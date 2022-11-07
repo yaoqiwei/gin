@@ -1,12 +1,19 @@
 package config
 
 import (
-	"fmt"
 	"gin/config/structs"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+var Base structs.BaseConfig
+var Http structs.HttpConf
+var TimeZone *time.Location
+var MysqlGin structs.MysqlConf
+var RedisConf structs.RedisConfig
+var DebugMode string
 
 /*Init : 初始化配置*/
 func init() {
@@ -16,45 +23,32 @@ func init() {
 	if err != nil {
 		logrus.Errorf("fatal error config file:", err)
 	}
+	viper.Unmarshal(&Base)
+
 }
 
 /*Api : API配置内容*/
-func Api() structs.ApiConfig {
-	port := viper.GetString("PORT")
-	fmt.Println("port", port)
-	if port == "" {
-		port = "8080"
-	}
-	return structs.ApiConfig{
-		Port: port,
+func HttpConf() {
+	Http = Base.HttpConf
+	if Http.Addr == "" {
+		Http.Addr = "8080"
 	}
 }
 
 // Database : 数据库配置内容
-func Database() (data structs.MysqlConf) {
-	viper.Unmarshal(&data)
-	fmt.Println("data:", data)
-	return
+func Database() {
+	MysqlGin = Base.MysqlConf
 }
 
 /*Redis : Redis 配置内容*/
-func Redis() structs.RedisConfig {
-	key := "RedisConfig."
-	Host := viper.GetString(key + "HOST")
-	fmt.Println("host", Host)
-	if Host == "" {
-		Host = "127.0.0.1"
+func Redis() {
+	RedisConf = Base.RedisConfig
+
+	if RedisConf.Host == "" {
+		RedisConf.Host = "127.0.0.1"
 	}
-	Port := viper.GetString(key + "PORT")
-	if Port == "" {
-		Port = "6379"
-	}
-	Password := viper.GetString(key + "PASSWORD")
-	DB := viper.GetInt(key + "DB")
-	return structs.RedisConfig{
-		Host:     Host,
-		Port:     Port,
-		Password: Password,
-		DB:       DB,
+
+	if RedisConf.Port == "" {
+		RedisConf.Port = "6379"
 	}
 }

@@ -1,17 +1,11 @@
-ApiConfig:
-  port: 8080
+HttpConf:
+  Addr: ':20151'
+  UploadAuth: 'A958EFDDB469B74FF3DEB81717914225'
+  ApiAesKey: 'C77A9FF7F323B5404902102257503C2F'
 
 TimeZone:
   Zone: 'CTS'
   Time: 28800
-
-DatabaseConfig:
-  Host: 127.0.0.1
-  Port: 3306
-  User: root
-  Password: 123456
-  Name: gin
-  Charset: utf8mb4
 
 MysqlConf:
   List:

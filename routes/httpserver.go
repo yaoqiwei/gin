@@ -12,7 +12,7 @@ func HttpServerRun() {
 	gin.SetMode(gin.ReleaseMode)
 	r := InitRouter()
 
-	addr := config.Api().Port
+	addr := config.Http.Addr
 	go func() {
 		logrus.Infof("HttpServerRun:%s", addr)
 		if err := r.Run(addr); err != nil {

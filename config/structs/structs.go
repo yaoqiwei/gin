@@ -2,12 +2,20 @@ package structs
 
 import "time"
 
-// ApiConfig : API配置文件结构
-type ApiConfig struct {
-	Port string
+type BaseConfig struct {
+	HttpConf    HttpConf    `yaml:"HttpConf"`
+	TimeZone    TimeZone    `yaml:"TimeZone"`
+	MysqlConf   MysqlConf   `yaml:"MysqlConf"`
+	RedisConfig RedisConfig `yaml:"RedisConfig"`
 }
 
-// http配置
+// TimeZone 时间规格
+type TimeZone struct {
+	Zone string `yaml:"Zone"`
+	Time int    `yaml:"Time"`
+}
+
+// HttpConf http配置
 type HttpConf struct {
 	TimeZone       *time.Location
 	Addr           string   `yaml:"Addr"`
@@ -20,8 +28,8 @@ type HttpConf struct {
 	TrustedProxies []string `yaml:"TrustedProxies"`
 }
 
-// MysqlConf 数据库配置文件
-type MysqlConf struct {
+// List 数据库配置文件
+type List struct {
 	DriverName      string `yaml:"DriverName"`
 	DataSourceName  string `yaml:"DataSourceName"`
 	MaxOpenConn     int    `yaml:"MaxOpenConn"`
@@ -30,16 +38,16 @@ type MysqlConf struct {
 	Prefix          string `yaml:"Prefix"`
 }
 
-// MysqlMapConfig
-type MysqlMapConfig struct {
-	List  map[string]*MysqlConf `yaml:"List"`
-	Split int                   `yaml:"Split"`
+// MysqlConf
+type MysqlConf struct {
+	List  map[string]*List `yaml:"List"`
+	Split int              `yaml:"Split"`
 }
 
 // RedisConfig : REDIS配置文件结构
 type RedisConfig struct {
-	Host     string
-	Port     string
-	Password string
-	DB       int
+	Host     string `yaml:"Host"`
+	Port     string `yaml:"Port"`
+	Password string `yaml:"Password"`
+	DB       int    `yaml:"DB"`
 }

@@ -1,19 +1,17 @@
 package main
 
 import (
+	"gin/common/lib"
 	"gin/config"
-	"gin/log"
-	"gin/redis"
 	"gin/routes"
 )
 
 func main() {
-	RedisConfig := config.Redis()
+	config.HttpConf()
 	config.Database()
+	config.Redis()
 
-	log.Init()
-	redis.Init(RedisConfig)
-
+	lib.Init()
 	routes.HttpServerRun()
 
 }
