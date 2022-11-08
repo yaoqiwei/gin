@@ -2,6 +2,7 @@ package lib
 
 import (
 	"gin/common/lib/gorm"
+	"gin/common/lib/redis"
 	"gin/config"
 	"os"
 	"time"
@@ -24,6 +25,8 @@ func Init() {
 	})
 
 	logrus.SetLevel(logrus.TraceLevel)
+
+	redis.Init()
 
 	if err := gorm.InitGormPool(); err != nil {
 		logrus.Errorf("InitGromPool:" + err.Error())
