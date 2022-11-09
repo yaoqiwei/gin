@@ -3,11 +3,11 @@ package controller
 import (
 	"fmt"
 	"gin/context"
-	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/robfig/cron"
+	"github.com/sirupsen/logrus"
 )
 
 type CornTestService struct {
@@ -24,7 +24,7 @@ func CornTest(c *gin.Context) {
 	pushtime, _ := time.ParseInLocation("2006-01-02 15:04:05", p.Pushtime, time.Local)
 	today := time.Now()
 	mistiming := pushtime.Sub(today)
-	log.Println("Starting...")
+	logrus.Println("Starting...")
 	a := cron.New()
 	fmt.Println(mistiming.String())
 	a.AddFunc("0 */1 * * * * ", func() {
