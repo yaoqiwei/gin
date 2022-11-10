@@ -371,6 +371,35 @@ func ZScore(key, member string) (float64, error) {
 	return RDB.ZScore(ctx, key, member).Result()
 }
 
+// Zrange 回有序集中，指定区间内的成员。递增排序
+func Zrange(key string, start, end int64) ([]string, error) {
+	return RDB.ZRange(ctx, key, start, end).Result()
+}
+
+// Zrevrange 回有序集中，指定区间内的成员。递减排序
+func Zrevrange(key string, start, end int64) ([]string, error) {
+	return RDB.ZRevRange(ctx, key, start, end).Result()
+}
+
+// ZAdd 用于将一个或多个成员元素及其分数值加入到有序集当中。 分数值可以是整数值或双精度浮点数。
+func ZAdd(key string, members ...*redis.Z) error {
+	_, err := RDB.ZAdd(ctx, key, members...).Result()
+	return err
+}
+
+// ZIncrBy 命令对有序集合中指定成员的分数加上增量 increment
+// 以通过传递一个负数值 increment ，让分数减去相应的值，
+func ZIncrBy(key string, increment float64, member string) error {
+	_, err := RDB.ZIncrBy(ctx, key, increment, member).Result()
+	return err
+}
+
+// HIncrBy 命令对有序集合中指定成员的分数加上增量
+func HIncrBy(key string, field string, incr int64) error {
+	_, err := RDB.HIncrBy(ctx, key, field, incr).Result()
+	return err
+}
+
 // conCode 反序列化数据
 func conCode(reply string, val interface{}) error {
 	return json.Unmarshal([]byte(reply), val)
