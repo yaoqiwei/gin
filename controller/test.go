@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +9,6 @@ type TestData struct {
 }
 
 func TestGet(c *gin.Context) {
-	fmt.Println("aaa")
 	// p := TestData{}
 	// if err := c.ShouldBind(&p); err != nil {
 	// 	context.ValidateError(c)

@@ -4,6 +4,8 @@ import (
 	"gin/common/lib"
 	"gin/config"
 	"gin/routes"
+	"os"
+	"os/signal"
 )
 
 func main() {
@@ -13,4 +15,9 @@ func main() {
 
 	lib.Init()
 	routes.HttpServerRun()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
 }

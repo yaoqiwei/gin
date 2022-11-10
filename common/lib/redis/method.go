@@ -41,14 +41,18 @@ func GetObject(key string, val interface{}) error {
 }
 
 // Set 对应key值设置键值
-func Set(key, value string, params ...time.Duration) error {
+func Set(key string, val interface{}, params ...time.Duration) error {
+	value, err := enCode(val)
+	if err != nil {
+		return err
+	}
 	var expiration time.Duration
 	if len(params) > 0 {
 		expiration = params[0]
 	} else {
 		expiration = DefaultExpiration
 	}
-	err := RDB.Set(ctx, key, value, expiration).Err()
+	err = RDB.Set(ctx, key, value, expiration).Err()
 	if err != nil {
 		logrus.Error("Redis SET", err)
 	}
@@ -56,7 +60,11 @@ func Set(key, value string, params ...time.Duration) error {
 }
 
 // SetNX 添加key值，如果存在则添加失败，不会修改原来的值
-func SetNX(key, value string, params ...time.Duration) (bool, error) {
+func SetNX(key string, val interface{}, params ...time.Duration) (bool, error) {
+	value, err := enCode(val)
+	if err != nil {
+		return false, err
+	}
 	var expiration time.Duration
 	if len(params) > 0 {
 		expiration = params[0]
@@ -398,6 +406,22 @@ func ZIncrBy(key string, increment float64, member string) error {
 func HIncrBy(key string, field string, incr int64) error {
 	_, err := RDB.HIncrBy(ctx, key, field, incr).Result()
 	return err
+}
+
+// enCode 序列化要保存的值
+func enCode(val interface{}) (interface{}, error) {
+	var value interface{}
+	switch v := val.(type) {
+	case string, int, uint, int8, int16, int32, int64, float32, float64, bool:
+		value = v
+	default:
+		b, err := json.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		value = string(b)
+	}
+	return value, nil
 }
 
 // conCode 反序列化数据

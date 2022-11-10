@@ -5,7 +5,7 @@ import (
 	"gin/config"
 	"gin/constant"
 	"gin/util/cryp"
-	"io/ioutil"
+	"io"
 
 	"strconv"
 	"time"
@@ -48,7 +48,7 @@ func HeaderAuthMiddleware() gin.HandlerFunc {
 			panic("block_2")
 		}
 
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(str)))
+		c.Request.Body = io.NopCloser(bytes.NewBuffer([]byte(str)))
 		c.Next()
 	}
 

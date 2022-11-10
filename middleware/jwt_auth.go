@@ -3,8 +3,9 @@ package middleware
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
-	"io/ioutil"
+	"gin/common/lib/redis"
+	userservice "gin/service/userService"
+	"io"
 	"strconv"
 	"strings"
 
@@ -16,14 +17,14 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 	//TODO 缺少redis比较
 	return func(c *gin.Context) {
 		type authStr struct {
-			Uid  string `json:"uid`
+			Uid  string `json:"uid"`
 			Auth string `json:"token"`
 		}
 		var o authStr
-		bodyBytes, _ := ioutil.ReadAll(c.Request.Body)
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		bodyBytes, _ := io.ReadAll(c.Request.Body)
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 		c.ShouldBind(&o)
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 		auth := c.GetHeader("Auth")
 
 		if auth == "" {
@@ -51,13 +52,19 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			}
 			uid, _ = strconv.ParseInt(uidStr, 10, 64)
 		}
-		fmt.Println(uid)
-		// if uid != 0 {
-		// 	msg, bol = userService.CheckMenuAuth(c.Request.URL.Path, uid, c, userTokenRedis)
-		// 	if !bol {
-		// 		c.Set("msg", msg)
-		// 	}
-		// }
+
+		key := redis.GetRedisKey("OPERATE-TOKEN", uid)
+		var userTokenRedis userservice.UserTokenRedis
+		redis.GetObject(key, &userTokenRedis)
+		bol, msg := userservice.CheckToken(uid, auth, userTokenRedis)
+		if bol {
+			c.Set("uid", uid)
+			c.Set("token", auth)
+		} else {
+			c.Set("msg", msg)
+			c.Next()
+		}
+
 		c.Next()
 	}
 }

@@ -3,7 +3,7 @@ package middleware
 import (
 	"bytes"
 	"gin/util/jwt"
-	"io/ioutil"
+	"io"
 	"strconv"
 	"strings"
 	"time"
@@ -23,8 +23,8 @@ func LogMiddleware() gin.HandlerFunc {
 		contentType := c.Request.Header.Get("Context-Type")
 		for _, v := range strings.Split(contentType, ";") {
 			if v == "application/json" {
-				bodyBytes, _ := ioutil.ReadAll(c.Request.Body)
-				c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+				bodyBytes, _ := io.ReadAll(c.Request.Body)
+				c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 				body = string(bodyBytes)
 				if body != "{}" && body != "" {

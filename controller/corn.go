@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"gin/common/lib"
 	"gin/context"
 	"time"
 
@@ -10,11 +11,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type TestController struct {
+}
+
+func TestRegister(router lib.RegisterRouterGroup, needLoginRouter lib.RegisterRouterGroup) {
+	c := TestController{}
+	needLoginRouter.POST("/test", c.CornTest)
+}
+
 type CornTestService struct {
 	Pushtime string `json:"pushtime"`
 }
 
-func CornTest(c *gin.Context) {
+func (*TestController) CornTest(c *gin.Context) {
 	p := CornTestService{}
 
 	if err := c.ShouldBind(&p); err != nil {
