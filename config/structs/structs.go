@@ -3,10 +3,11 @@ package structs
 import "time"
 
 type BaseConfig struct {
-	HttpConf    HttpConf    `yaml:"HttpConf"`
-	TimeZone    TimeZone    `yaml:"TimeZone"`
-	MysqlConf   MysqlConf   `yaml:"MysqlConf"`
-	RedisConfig RedisConfig `yaml:"RedisConfig"`
+	HttpConf       HttpConf       `yaml:"HttpConf"`
+	TimeZone       TimeZone       `yaml:"TimeZone"`
+	MysqlConf      MysqlConf      `yaml:"MysqlConf"`
+	RedisConfig    RedisConfig    `yaml:"RedisConfig"`
+	RabbitMQConfig RabbitMQConfig `yaml:"RabbitMQConfig"`
 }
 
 // TimeZone 时间规格
@@ -50,4 +51,12 @@ type RedisConfig struct {
 	Port     string `yaml:"Port"`
 	Password string `yaml:"Password"`
 	DB       int    `yaml:"DB"`
+}
+
+// RabbitMQConfig : RabbitMQ配置文件结构
+type RabbitMQConfig struct {
+	Host     string `yaml:"Host"`
+	Port     string `yaml:"Port"`
+	UserName string `yaml:"UserName"`
+	PassWord string `yaml:"PassWord"`
 }

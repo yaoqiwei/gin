@@ -26,7 +26,13 @@ MysqlConf:
   Split: 3
 
 RedisConfig:
-  Host: 127.0.0.1,
+  Host: 127.0.0.1
   Port: 6379
   Password: 123
   Db: 2
+
+RabbitMQConfig:
+  Host: 'localhost'
+  Port: '5673'
+  UserName: 'guest'
+  PassWord: 'guest'

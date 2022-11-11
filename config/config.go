@@ -13,9 +13,10 @@ var Http structs.HttpConf
 var TimeZone *time.Location
 var MysqlGin structs.MysqlConf
 var RedisConf structs.RedisConfig
+var RabbitMQConf structs.RabbitMQConfig
 var DebugMode string
 
-/*Init : 初始化配置*/
+// Init : 初始化配置
 func init() {
 	viper.SetConfigFile("./gin_config.yaml")
 	viper.AddConfigPath(".")
@@ -27,7 +28,7 @@ func init() {
 
 }
 
-/*Api : API配置内容*/
+// Api : API配置内容
 func HttpConf() {
 	Http = Base.HttpConf
 	if Http.Addr == "" {
@@ -40,7 +41,7 @@ func Database() {
 	MysqlGin = Base.MysqlConf
 }
 
-/*Redis : Redis 配置内容*/
+// Redis : Redis 配置内容
 func Redis() {
 	RedisConf = Base.RedisConfig
 
@@ -50,5 +51,22 @@ func Redis() {
 
 	if RedisConf.Port == "" {
 		RedisConf.Port = "6379"
+	}
+}
+
+// RabbitMQ : RabbitMQ 配置
+func RabbitMQ() {
+	RabbitMQConf = Base.RabbitMQConfig
+	if RabbitMQConf.Host == "" {
+		RabbitMQConf.Host = "127.0.0.1"
+	}
+	if RabbitMQConf.Port == "" {
+		RabbitMQConf.Port = "15672"
+	}
+	if RabbitMQConf.UserName == "" {
+		RabbitMQConf.UserName = "guest"
+	}
+	if RabbitMQConf.PassWord == "" {
+		RabbitMQConf.PassWord = "guest"
 	}
 }

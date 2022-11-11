@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"gin/common/lib"
+	"gin/common/lib/rabbitmq"
 	"gin/context"
 	"time"
 
@@ -17,6 +18,7 @@ type TestController struct {
 func TestRegister(router lib.RegisterRouterGroup, needLoginRouter lib.RegisterRouterGroup) {
 	c := TestController{}
 	needLoginRouter.POST("/test", c.CornTest)
+	needLoginRouter.POST("/send", c.SendTest)
 }
 
 type CornTestService struct {
@@ -42,4 +44,11 @@ func (*TestController) CornTest(c *gin.Context) {
 	a.Start()
 	defer a.Stop()
 	select {}
+}
+
+func (*TestController) SendTest(c *gin.Context) {
+	fmt.Println("AAA", rabbitmq.RabbitMqConn)
+	for i := 0; i < 100; i++ {
+		rabbitmq.RabbitMqConn.SendMessage([]byte{12}, "aaa")
+	}
 }
