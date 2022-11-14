@@ -2,7 +2,6 @@ package rabbitmq
 
 import (
 	"encoding/json"
-	"fmt"
 	"gin/config/structs"
 	"time"
 
@@ -142,7 +141,6 @@ func (c *Connection) SendMessage(body []byte, queueName string) {
 		NotifyCount: 1,
 	}
 	body, _ = json.Marshal(m)
-	fmt.Println("aa", body)
 	// 发布
 	err := c.Ch.Publish(
 		exchangeName, // exchange 默认模式，exchange为空
