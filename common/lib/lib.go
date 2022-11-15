@@ -34,11 +34,3 @@ func Init() {
 	logrus.Infof("success loading resources.")
 	logrus.Infof("------------------------------------------------------------------------")
 }
-
-// Destroy 公共销毁函数
-func Destroy() {
-	logrus.Infof("------------------------------------------------------------------------")
-	logrus.Infof("start Destroying resources.")
-	gorm.CloseDB()
-	logrus.Infof("success Destroying resources.")
-}

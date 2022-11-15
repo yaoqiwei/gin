@@ -16,7 +16,6 @@ func main() {
 	config.RabbitMQ()
 
 	lib.Init()
-	defer lib.Destroy()
 	rabbitmq.InitRabbitMQ()
 	routes.HttpServerRun()
 
