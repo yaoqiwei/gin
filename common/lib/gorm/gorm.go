@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"database/sql"
 	"errors"
 	"gin/config"
 	"gin/config/structs"
@@ -13,6 +14,7 @@ import (
 )
 
 var GormGinPool map[string]*gorm.DB
+var DBMapPool map[string]*sql.DB
 var GinDb *DbWrapper
 
 type DbWrapper struct {
@@ -57,6 +59,7 @@ func InitGormPool() error {
 
 // setDbPoll 设置数据库连接池
 func setDbPoll(dbPool map[string]*gorm.DB, mysqlConf structs.MysqlConf) error {
+	DBMapPool = map[string]*sql.DB{}
 	for confName, DbConf := range mysqlConf.List {
 		gormDB, err := gorm.Open(mysql.Open(DbConf.DataSourceName), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
@@ -79,12 +82,19 @@ func setDbPoll(dbPool map[string]*gorm.DB, mysqlConf structs.MysqlConf) error {
 		sqlDB.SetMaxOpenConns(DbConf.MaxOpenConn)
 		//最大连接超时
 		sqlDB.SetConnMaxLifetime(time.Duration(DbConf.MaxConnLifeTime) * time.Second)
+
+		err = sqlDB.Ping()
+		if err != nil {
+			return err
+		}
+
 		dbPool[confName] = gormDB
+		DBMapPool[confName] = sqlDB
 	}
 	return nil
 }
 
-// GetVideoPool 获取gorm连接池
+// GetGinPool 获取gorm连接池
 func GetGinPool(name string) (*DbWrapper, error) {
 	if dbPool, ok := GormGinPool[name]; ok {
 		dbWrapper := DbWrapper{}
@@ -93,6 +103,13 @@ func GetGinPool(name string) (*DbWrapper, error) {
 		return &dbWrapper, nil
 	}
 	return nil, errors.New("get gormPool error")
+}
+
+// CloseDB 关闭数据库连接
+func CloseDB() {
+	for _, db := range DBMapPool {
+		db.Close()
+	}
 }
 
 // BlendOr 混合OR查询条件
