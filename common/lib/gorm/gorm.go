@@ -60,7 +60,7 @@ func setDbPoll(dbPool map[string]*gorm.DB, mysqlConf structs.MysqlConf) error {
 	for confName, DbConf := range mysqlConf.List {
 		gormDB, err := gorm.Open(mysql.Open(DbConf.DataSourceName), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
-				TablePrefix:   DbConf.Prefix,
+				// TablePrefix:   DbConf.Prefix,
 				SingularTable: true, // 使用单数表名
 			},
 			//禁用默认事务，防止重复提交/回滚

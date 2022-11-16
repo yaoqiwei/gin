@@ -20,10 +20,11 @@ func LogMiddleware() gin.HandlerFunc {
 		method := c.Request.Method
 		var body string
 
-		contentType := c.Request.Header.Get("Context-Type")
+		contentType := c.Request.Header.Get("content-type")
 		for _, v := range strings.Split(contentType, ";") {
 			if v == "application/json" {
 				bodyBytes, _ := io.ReadAll(c.Request.Body)
+
 				c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 				body = string(bodyBytes)
