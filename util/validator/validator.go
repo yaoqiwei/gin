@@ -33,29 +33,28 @@ func Empty(val interface{}) bool {
 
 	return reflect.DeepEqual(val, reflect.Zero(v.Type()).Interface())
 }
+
+// IsMail 校验邮箱
 func IsMail(str string) bool {
 	match, _ := regexp.MatchString("^([a-zA-Z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$", str)
 	return match
 }
 
+// IsPhone 校验手机号
 func IsPhone(str string) bool {
 	match, _ := regexp.MatchString("^1[3|4|5|6|7|8|9]\\d{9}$", str)
 	return match
 }
 
+// IsUserName  校验用户名
 func IsUserName(str string) bool {
 	match, _ := regexp.MatchString("^[0-9a-zA-Z]{3,20}$", str)
 	return match
 }
 
+// Passcheck 校验密码
 func Passcheck(str string) bool {
-	// num, _ := regexp.MatchString("^[a-zA-Z]+$", str)
-	// word, _ := regexp.MatchString("^[0-9]+$", str)
 	check, _ := regexp.MatchString("^[a-zA-Z0-9]{6,12}$", str)
-
-	// if num || word {
-	// 	panic(http_error.PasswordTypeError)
-	// }
 
 	if !check {
 		panic(http_error.PasswordCountError)
