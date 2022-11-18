@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"gin/common/lib"
 	"gin/middleware"
 	"gin/model/body"
 	"gin/service/pushrecord"
 	"gin/util/request"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,5 +29,7 @@ func (*TestController) CornTest(c *gin.Context) {
 }
 
 func (*TestController) SendTest(c *gin.Context) {
-
+	str := "Golang reguest expressions for testing"
+	matched, err := regexp.MatchString("^Golang", str)
+	fmt.Println("matched", matched, err)
 }

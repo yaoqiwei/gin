@@ -42,7 +42,7 @@ func HeaderAuthMiddleware() gin.HandlerFunc {
 			panic("block_1")
 		}
 
-		str, _ := cryp.AesEncrypt(o.EndData, constant.ApiAesKey)
+		str, _ := cryp.EncryptByAes(o.EndData, constant.ApiAesKey)
 
 		if str == "" {
 			panic("block_2")

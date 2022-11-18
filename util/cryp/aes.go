@@ -5,169 +5,94 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
+	"errors"
 )
 
-func AesECBEncrypt(data, key []byte) ([]byte, error) {
+//加密过程：
+//  1、处理数据，对数据进行填充，采用PKCS7（当密钥长度不够时，缺几位补几个几）的方式。
+//  2、对数据进行加密，采用AES加密方法中CBC加密模式
+//  3、对得到的加密数据，进行base64加密，得到字符串
+// 解密过程相反
+
+// 16,24,32位字符串的话，分别对应AES-128，AES-192，AES-256 加密方法
+
+// pkcs7Padding 填充
+func pkcs7Padding(data []byte, blockSize int) []byte {
+	//判断缺少几位长度。最少1，最多 blockSize
+	padding := blockSize - len(data)%blockSize
+	//补足位数。把切片[]byte{byte(padding)}复制padding个
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(data, padText...)
+}
+
+// pkcs7UnPadding 填充的反向操作
+func pkcs7UnPadding(data []byte) ([]byte, error) {
+	length := len(data)
+	if length == 0 {
+		return nil, errors.New("加密字符串错误！")
+	}
+	//获取填充的个数
+	unPadding := int(data[length-1])
+	return data[:(length - unPadding)], nil
+}
+
+// AesEncrypt 加密
+func AesEncrypt(data []byte, key []byte) ([]byte, error) {
+	//创建加密实例
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
-	ecb := NewECBEncryptEr(block)
-	// 加PKCS7填充
-	content := PKCS7Padding(data, block.BlockSize())
-	encryptData := make([]byte, len(content))
-	// 生成加密数据
-	ecb.CryptBlocks(encryptData, content)
-	return encryptData, nil
-}
-
-type ecb struct {
-	b         cipher.Block
-	blockSize int
-}
-type ecbEncryptEr ecb
-
-func newECB(b cipher.Block) *ecb {
-	return &ecb{
-		b:         b,
-		blockSize: b.BlockSize(),
-	}
-}
-
-func (x *ecbEncryptEr) BlockSize() int { return x.blockSize }
-
-func (x *ecbEncryptEr) CryptBlocks(dst, src []byte) {
-	if len(src)%x.blockSize != 0 {
-		panic("crypto/cipher: input not full blocks")
-	}
-	if len(dst) < len(src) {
-		panic("crypto/cipher: output smaller than input")
-	}
-	for len(src) > 0 {
-		x.b.Encrypt(dst, src[:x.blockSize])
-		src = src[x.blockSize:]
-		dst = dst[x.blockSize:]
-	}
-}
-
-func NewECBEncryptEr(b cipher.Block) cipher.BlockMode {
-	return (*ecbEncryptEr)(newECB(b))
-}
-
-func AesEncryptCBC(orig string, key string) string {
-	// 转成字节数组
-	origData := []byte(orig)
-	str, _ := AesEncryptByte(origData, key)
-	return base64.StdEncoding.EncodeToString(str)
-}
-
-func AesDecryptCBC(cryted string, key string) string {
-	// 转成字节数组
-	crytedByte, _ := base64.StdEncoding.DecodeString(cryted)
-	str, _ := AesDecryptByte(crytedByte, key)
-	return string(str)
-}
-
-// AES 加解密
-// 这个工具类采用的是CBC分组模式
-
-func AesEncryptByte(origData []byte, key string) ([]byte, error) {
-	k := []byte(key)
-	// 分组秘钥
-	block, err := aes.NewCipher(k)
-	if err != nil {
-		return []byte(""), err
-	}
-	// 获取秘钥块的长度
+	//判断加密快的大小
 	blockSize := block.BlockSize()
-	// 补全码
-	origData = PKCS7Padding(origData, blockSize)
-	// 加密模式
-	blockMode := cipher.NewCBCEncrypter(block, k[:blockSize])
-	// 创建数组
-	cryted := make([]byte, len(origData))
-	// 加密
-	blockMode.CryptBlocks(cryted, origData)
-	return cryted, nil
+	//填充
+	encryptBytes := pkcs7Padding(data, blockSize)
+	//初始化加密数据接收切片
+	crypted := make([]byte, len(encryptBytes))
+	//使用cbc加密模式
+	blockMode := cipher.NewCBCEncrypter(block, key[:blockSize])
+	//执行加密
+	blockMode.CryptBlocks(crypted, encryptBytes)
+	return crypted, nil
 }
 
-func AesEncrypt(plaintext string, key string) (string, error) {
-	encryptByte, err := AesEncryptByte([]byte(plaintext), key)
+// AesDecrypt 解密
+func AesDecrypt(data []byte, key []byte) ([]byte, error) {
+	//创建实例
+	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(encryptByte), nil
-}
-
-func AesDecryptByte(crytedByte []byte, key string) ([]byte, error) {
-	// 转成字节数组
-	k := []byte(key)
-	// 分组秘钥
-	block, err := aes.NewCipher(k)
-	if err != nil {
-		return []byte(""), err
-	}
-	// 获取秘钥块的长度
+	//获取块的大小
 	blockSize := block.BlockSize()
-	// 加密模式
-	blockMode := cipher.NewCBCDecrypter(block, k[:blockSize])
-	// 创建数组
-	orig := make([]byte, len(crytedByte))
-	// 解密
-	blockMode.CryptBlocks(orig, crytedByte)
-	// 去补全码
-	orig = PKCS7UnPadding(orig)
-	return orig, nil
+	//使用cbc
+	blockMode := cipher.NewCBCDecrypter(block, key[:blockSize])
+	//初始化解密数据接收切片
+	crypted := make([]byte, len(data))
+	//执行解密
+	blockMode.CryptBlocks(crypted, data)
+	//去除填充
+	crypted, err = pkcs7UnPadding(crypted)
+	if err != nil {
+		return nil, err
+	}
+	return crypted, nil
 }
-func AesDecrypt(cryted string, key string) (string, error) {
-	crytedByte, err := base64.StdEncoding.DecodeString(cryted)
+
+// EncryptByAes Aes加密 后 base64 再加
+func EncryptByAes(data, key string) (string, error) {
+	res, err := AesEncrypt([]byte(data), []byte(key))
 	if err != nil {
 		return "", err
 	}
-	decryptByte, err := AesDecryptByte(crytedByte, key)
+	return base64.StdEncoding.EncodeToString(res), nil
+}
+
+// DecryptByAes Aes 解密
+func DecryptByAes(data, key string) ([]byte, error) {
+	dataByte, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(decryptByte), nil
-}
-
-// PKCS7Padding 补码
-func PKCS7Padding(ciphertext []byte, blocksize int) []byte {
-	padding := blocksize - len(ciphertext)%blocksize
-	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
-	return append(ciphertext, padtext...)
-}
-
-// PKCS7UnPadding 去码
-func PKCS7UnPadding(origData []byte) []byte {
-	length := len(origData)
-	unpadding := int(origData[length-1])
-	return origData[:(length - unpadding)]
-}
-
-func PPVODAesEncryptByte(origData []byte, rawKey string) ([]byte, error) {
-
-	genKeyData := ""
-
-	for len(genKeyData) < 32 {
-		genKeyData += string(MD5SUM(genKeyData + rawKey))
-	}
-
-	generatedKey := genKeyData[0:16]
-	generatedIV := genKeyData[16:32]
-
-	// 分组秘钥
-	block, err := aes.NewCipher([]byte(generatedKey))
-	if err != nil {
-		return []byte(""), err
-	}
-	// 补全码
-	origData = PKCS7Padding(origData, 16)
-	// 加密模式
-	blockMode := cipher.NewCBCEncrypter(block, []byte(generatedIV))
-	// 创建数组
-	cryted := make([]byte, len(origData))
-	// 加密
-	blockMode.CryptBlocks(cryted, origData)
-	return cryted, nil
+	return AesDecrypt(dataByte, []byte(key))
 }
