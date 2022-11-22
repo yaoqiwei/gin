@@ -1,13 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"gin/common/lib"
 	"gin/middleware"
 	"gin/model/body"
 	"gin/service/pushrecord"
 	"gin/util/request"
-	"regexp"
+	"math"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +28,21 @@ func (*TestController) CornTest(c *gin.Context) {
 }
 
 func (*TestController) SendTest(c *gin.Context) {
-	str := "Golang reguest expressions for testing"
-	matched, err := regexp.MatchString("^Golang", str)
-	fmt.Println("matched", matched, err)
+	var p body.TestParam
+	request.Bind(c, &p)
+	aa := reverse(p.Number)
+	middleware.Success(c, aa)
+}
+
+func reverse(x int) int {
+	rev := 0
+	for x != 0 {
+		if rev < math.MinInt32/10 || rev > math.MaxInt32/10 {
+			return 0
+		}
+		digit := x % 10
+		x /= 10
+		rev = rev*10 + digit
+	}
+	return rev
 }
