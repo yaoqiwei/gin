@@ -8,6 +8,7 @@ type BaseConfig struct {
 	MysqlConf      MysqlConf      `yaml:"MysqlConf"`
 	RedisConfig    RedisConfig    `yaml:"RedisConfig"`
 	RabbitMQConfig RabbitMQConfig `yaml:"RabbitMQConfig"`
+	DebugMode      string         `yaml:"DebugMode"`
 }
 
 // TimeZone 时间规格

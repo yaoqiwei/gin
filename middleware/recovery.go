@@ -3,8 +3,7 @@ package middleware
 import (
 	"fmt"
 	"gin/config"
-	"gin/response"
-	"gin/response/http_error"
+	"gin/model/http_error"
 	"runtime/debug"
 	"time"
 
@@ -12,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// RecoveryMiddleware buhuo
+// RecoveryMiddleware 补获所有panic，并返回错误信息
 func RecoveryMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
@@ -21,7 +20,7 @@ func RecoveryMiddleware() gin.HandlerFunc {
 				latency := time.Since(start)
 				if e, ok := err.(http_error.HttpError); ok {
 					logrus.Infof("response:[%d,%v] %s", e.ErrorCode, latency, e.ErrorMsg)
-					response.Error(c, response.ResponseCode(e.ErrorCode), e.ErrorMsg)
+					Error(c, ResponseCode(e.ErrorCode), e.ErrorMsg)
 					return
 				}
 				//先做一下日志记录
@@ -29,12 +28,11 @@ func RecoveryMiddleware() gin.HandlerFunc {
 					"error": fmt.Sprint(err),
 					"stack": string(debug.Stack()),
 				})
-
 				if config.DebugMode != "debug" {
-					response.Error(c, 500, "内部错误")
+					Error(c, 500, "内部错误")
 					return
 				} else {
-					response.Error(c, 500, fmt.Sprint(err))
+					Error(c, 500, fmt.Sprint(err))
 					return
 				}
 			}

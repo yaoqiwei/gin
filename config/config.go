@@ -41,6 +41,14 @@ func Database() {
 	MysqlGin = Base.MysqlConf
 }
 
+// ModeConf : ModeConf 配置
+func ModeConf() {
+	DebugMode = Base.DebugMode
+	if DebugMode == "" {
+		DebugMode = "dev"
+	}
+}
+
 // Redis : Redis 配置内容
 func Redis() {
 	RedisConf = Base.RedisConfig

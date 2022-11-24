@@ -5,7 +5,9 @@ HttpConf:
 
 TimeZone:
   Zone: 'CTS'
-  Time: 28800
+  Time: 8*3600
+
+DebugMode: 'debug'
 
 MysqlConf:
   List:

@@ -14,6 +14,7 @@ func main() {
 	config.Database()
 	config.Redis()
 	config.RabbitMQ()
+	config.ModeConf()
 
 	lib.Init()
 	rabbitmq.InitRabbitMQ()
