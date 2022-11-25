@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"gin/response/http_error"
+	"gin/model/http_error"
 	"reflect"
 	"regexp"
 	"strings"
