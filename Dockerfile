@@ -13,5 +13,6 @@ RUN go build -o gin .
 
 FROM alpine
 EXPOSE 20152
+ENV TZ=Asia/Shanghai
 COPY --from=builder /build/gin /
 ENTRYPOINT ["/gin"]
