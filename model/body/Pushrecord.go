@@ -8,3 +8,7 @@ type PushrecordParam struct {
 	Adminid int64  `json:"adminid`
 	Admin   string `json:"admin"`
 }
+
+type SendParam struct {
+	Content string `json:"content"`
+}
