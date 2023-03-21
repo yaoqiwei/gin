@@ -7,6 +7,6 @@ import (
 
 // PushrecordAdd 添加消息
 func PushrecordAdd(p body.PushrecordParam) {
-	pushrecord.Get(9)
+	pushrecord.Get(7)
 	// pushrecord.Add(p)
 }

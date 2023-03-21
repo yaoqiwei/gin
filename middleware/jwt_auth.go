@@ -14,7 +14,6 @@ import (
 
 func JwtAuthMiddleware() gin.HandlerFunc {
 
-	//TODO 缺少redis比较
 	return func(c *gin.Context) {
 		type authStr struct {
 			Uid  string `json:"uid"`
