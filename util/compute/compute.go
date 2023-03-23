@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 // RoundedFixed 保留小数点后n位-四舍五入
@@ -72,4 +74,44 @@ func Rand(min, max int) int {
 	}
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return r.Intn(max+1-min) + min
+}
+
+// AddFloat 浮点数相加
+func AddFloat(a, b float64) float64 {
+	res, _ := decimal.NewFromFloat(a).Add(decimal.NewFromFloat(b)).Float64()
+	return res
+}
+
+// SubFloat 浮点数相减
+func SubFloat(a, b float64) float64 {
+	res, _ := decimal.NewFromFloat(a).Sub(decimal.NewFromFloat(b)).Float64()
+	return res
+}
+
+// DivFloat 浮点数相除
+func DivFloat(a, b float64) float64 {
+	res, _ := decimal.NewFromFloat(a).Div(decimal.NewFromFloat(b)).Float64()
+	return res
+}
+
+// MulFloat 浮点数相乘
+func MulFloat(a, b float64) float64 {
+	res, _ := decimal.NewFromFloat(a).Mul(decimal.NewFromFloat(b)).Float64()
+	return res
+}
+
+// Min 返回最小值
+func Min(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
+
+// Max 返回最大值
+func Max(a, b int) int {
+	if b > a {
+		return b
+	}
+	return a
 }
