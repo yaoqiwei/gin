@@ -2,7 +2,6 @@ package main
 
 import (
 	"gin/common/lib"
-	"gin/common/lib/rabbitmq"
 	"gin/config"
 	"gin/routes"
 	"os"
@@ -17,7 +16,7 @@ func main() {
 	config.ModeConf()
 
 	lib.Init()
-	rabbitmq.InitRabbitMQ()
+	// rabbitmq.InitRabbitMQ()
 	routes.HttpServerRun()
 
 	quit := make(chan os.Signal, 1)
