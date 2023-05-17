@@ -5,10 +5,13 @@ import (
 	"gin/config"
 	"gin/config/structs"
 	"gin/util/stringify"
+	"log"
+	"os"
 	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -38,6 +41,18 @@ func SubTable(d *DbWrapper, tableName string, i interface{}) string {
 	v := stringify.ToInt(i)
 	suffix := "_" + stringify.ToString(v%d.Split)
 	return tableName + suffix
+}
+
+// OutTimePrint sql执行时间超出打印
+func (d *DbWrapper) OutTimePrint(t int) *gorm.DB {
+	return d.Session(&gorm.Session{
+		Logger: logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
+			SlowThreshold:             time.Duration(t) * time.Second, // 慢sql阈值
+			LogLevel:                  logger.Warn,                    // 日志级别
+			IgnoreRecordNotFoundError: true,                           // 忽略ErrRecordNotFound（记录未找到）错误
+			Colorful:                  false,                          // 禁用彩色打印
+		}),
+	})
 }
 
 // InitGormPool 配置gorm

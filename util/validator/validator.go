@@ -54,7 +54,8 @@ func IsUserName(str string) bool {
 
 // Passcheck 校验密码
 func Passcheck(str string) bool {
-	check, _ := regexp.MatchString("^[a-zA-Z0-9]{6,12}$", str)
+	// check, _ := regexp.MatchString("^[a-zA-Z0-9]{6,12}$", str)
+	check, _ := regexp.MatchString("^[`~!@#$%^&*()_\\-+=<>?:\"{}|,.\\/;'\\\\[\\]·~！@#￥%……&*（）——\\-+={}|《》？：“”【】、；‘'，。、a-zA-Z0-9\\S+]{6,20}$", str)
 
 	if !check {
 		panic(http_error.PasswordCountError)
